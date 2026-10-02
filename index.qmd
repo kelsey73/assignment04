@@ -52,3 +52,22 @@ countries |>
 ```
 
 #### Each point in this graph is a country, and the size of the point shows its population. Countries with higher GDP per capita use much more energy per person, and most points stay close to the trend line. This means that as poorer countries grow richer, their energy use is likely to rise. 
+
+## Graph 2: Renewable Electricity Overtime
+
+```{r}
+countries |>
+  filter(country %in% my_countries, year >= 2000, year <= 2024) |>
+  ggplot(aes(x = year, y = renewables_share_elec, color = country, linetype = country)) +
+  geom_line(linewidth = 2) +
+  labs(title = "German had the biggest increase in renewable electricity",
+       subtitle = "Share of electricity from renewables in five countries, 2000-2024",
+       x = "Year",
+       y = "Share of electricity from renewables (%)",
+       color = "Country",
+       linetype = "Country",
+       caption = "Source: Our World in Data Energy Dataset") +
+  theme_minimal()
+```
+
+#### Germany’s renewable share rose from about 6% in 2000 to about 59% in 2024. China and the United States also grew, but more slowly, and India grew the least. Brazil was already near 90% the whole time because it uses a lot of hydropower.
