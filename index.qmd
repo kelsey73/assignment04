@@ -91,3 +91,101 @@ countries |>
 ```
 
 #### In 2024, fossil fuels made about 78% of India’s electricity and about 62% of China’s, but only about 11% of Brazil’s. Countries that still depend heavily on fossil fuels have the most room to cut emissions.
+
+## Graph 4: Improved Version of Graph 2
+
+I want to improve my graph 2 using Gemini. My prompt for Gemini: I've created this graph using ggplot2 to compare the share of renewable electricity in five countries: China, Brazil, German, India, and United States from 2000-2024. The data set I used is Our Word in Data-Energy. Now I want you to improve this image, polish it and give me some coding suggestions.
+
+![](images/83a15bfa5000f26451deba140e2c77cb.png){width="1258"}
+
+```{r}
+#| fig-width: 11.5
+#| fig-height: 6.8
+#| out-width: "100%"   
+#| fig-align: "center"  
+
+library(tidyverse)
+library(scales)
+
+# 1. Load data and filter relevant countries (2000-2024)
+owid_data <- read.csv("data/owid-energy-data.csv")
+
+countries_of_interest <- c("Brazil", "China", "Germany", "India", "United States")
+
+df_filtered <- owid_data %>%
+  filter(country %in% countries_of_interest, year >= 2000, year <= 2024) %>%
+  select(country, year, renewables_share_elec) %>%
+  drop_na()
+
+# 2. Extract endpoints for direct line labeling
+df_endpoints <- df_filtered %>%
+  filter(year == 2024) %>%
+  mutate(label = paste0(country, " (", round(renewables_share_elec), "%)"))
+
+# Baseline 2000 start point for Germany
+df_germany_2000 <- df_filtered %>%
+  filter(country == "Germany", year == 2000)
+
+# 3. Custom color palette and line widths
+country_colors <- c(
+  "Germany"       = "#00875A", # Vibrant highlight green
+  "Brazil"        = "#0052CC", # Deep navy
+  "China"         = "#DE350B", # Vermilion red
+  "United States" = "#FFAB00", # Warm amber
+  "India"         = "#6B778C"  # Slate grey
+)
+
+country_sizes <- c(
+  "Germany"       = 1.5,
+  "Brazil"        = 0.9,
+  "China"         = 0.9,
+  "United States" = 0.9,
+  "India"         = 0.9
+)
+
+# 4. Build ggplot graph
+p <- ggplot(df_filtered, aes(x = year, y = renewables_share_elec, color = country, group = country)) +
+  # Lines with variable thickness
+  geom_line(aes(size = country), lineend = "round") +
+  scale_size_manual(values = country_sizes, guide = "none") +
+  scale_color_manual(values = country_colors, guide = "none") +
+  
+  # Terminal points at 2024 and Germany 2000 start
+  geom_point(data = df_endpoints, aes(x = year, y = renewables_share_elec), size = 2.5) +
+  geom_point(data = df_germany_2000, aes(x = year, y = renewables_share_elec), color = "#00875A", size = 2.5) +
+  
+  # Direct end-of-line text labels
+  geom_text(
+    data = df_endpoints,
+    aes(label = label),
+    hjust = -0.15,
+    fontface = if_else(df_endpoints$country == "Germany", "bold", "plain"),
+    size = 3.8,
+    show.legend = FALSE
+  ) +
+  
+  # Scale and axis limits
+  scale_x_continuous(
+    breaks = c(2000, 2005, 2010, 2015, 2020, 2024),
+    limits = c(2000, 2029),
+    expand = c(0, 0)
+  ) +
+  scale_y_continuous(
+    labels = percent_format(scale = 1),
+    limits = c(0, 100),
+    breaks = seq(0, 100, 25)
+  ) +
+  
+  # Titles and captions
+  labs(
+    title = "Germany Led Renewable Growth with a 50+ Percentage-Point Surge",
+    subtitle = "Share of electricity generation from renewable sources (2000–2024)",
+    caption = "Source: Our World in Data Energy Dataset (2024)",
+    x = NULL,
+    y = NULL
+  ) +
+  
+  # Clean minimal theme
+  theme_minimal()
+print(p)
+```
