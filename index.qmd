@@ -31,4 +31,24 @@ countries <- owid_energy_data |>
 my_countries <- c("Brazil", "China", "Germany", "India", "United States")
 ```
 
-The `echo: false` option disables the printing of code (only output is displayed).
+## Graph 1: Income and Energy Use
+
+```{r}
+countries |>
+  filter(year == 2022) |>
+  mutate(gdp_per_capita = gdp / population) |>
+  ggplot(aes(x = gdp_per_capita, y = energy_per_capita)) +
+  geom_point(aes(size = population), alpha = 0.5, color = "blue") +
+  geom_smooth(method = "lm", se = FALSE, color = "orange") +
+  scale_x_log10() +
+  scale_y_log10() +
+  labs(title = "Richer countries use more energy per person",
+       subtitle = "GDP per capita and energy use per capita, 2022",
+       x = "GDP per capita (international-$, log scale)",
+       y = "Energy per capita (Kwh, log scale)",
+       size = "Population",
+       caption = "Source: Our World in Data Energy Dataset") +
+    theme_minimal()
+```
+
+#### Each point in this graph is a country, and the size of the point shows its population. Countries with higher GDP per capita use much more energy per person, and most points stay close to the trend line. This means that as poorer countries grow richer, their energy use is likely to rise. 
