@@ -71,3 +71,23 @@ countries |>
 ```
 
 #### Germany’s renewable share rose from about 6% in 2000 to about 59% in 2024. China and the United States also grew, but more slowly, and India grew the least. Brazil was already near 90% the whole time because it uses a lot of hydropower.
+
+## Graph 3: Fossil Fuels in Electricity
+
+```{r}
+countries |>
+  filter(country %in% my_countries, year == 2024) |>
+  ggplot(aes(x = country, y = fossil_share_elec, fill = country)) +
+  geom_col(width = 0.6) +
+  labs(
+    title = "India relies most on fossil fuels for electricity",
+    subtitle = "Share of electricity from coal, oil and gas, 2024",
+    x = "Country",
+    y = "Share of electricity from fossil fuels (%)",
+    fill = "Country",
+    caption = "Source: Our World in Data Energy Dataset"
+  ) + 
+  theme_minimal()
+```
+
+#### In 2024, fossil fuels made about 78% of India’s electricity and about 62% of China’s, but only about 11% of Brazil’s. Countries that still depend heavily on fossil fuels have the most room to cut emissions.
