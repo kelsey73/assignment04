@@ -1,26 +1,34 @@
 ---
-title: "assignment04"
-format: html
-editor: visual
+title: "Assignment04"
+author:
+  - "Rui Dong rd1203"
+format:
+  html:
+    embed-resources: true
+execute:
+  warning: false
+  message: false
 ---
 
-## Quarto
+## Introduction
 
-Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
+This analysis uses the [Our World in Data-Energy](https://github.com/owid/energy-data) published by University of Oxford. This dataset contains 130 variables across 220 countries from year 1900 to 2025. It covers country-level data on energy use and electricity generation. I look at how energy use relates to income and how much electricity comes from clean and fossil sources respectively, because cleaner electricity is an important part of climate policy.
 
-## Running Codes
-
-When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
+## Data Preparation
 
 ```{r}
-1 + 1
+library(tidyverse)
+library(readr)
+owid_energy_data <- read_csv("data/owid-energy-data.csv")
 ```
 
-You can add options to executable code like this
-
 ```{r}
-#| echo: false
-2 * 2
+# Keep only countries (rows without an ISO code are regions like "World" or "Europe")
+countries <- owid_energy_data |>
+  filter(!is.na(iso_code))
+
+# Five large countries to compare
+my_countries <- c("Brazil", "China", "Germany", "India", "United States")
 ```
 
 The `echo: false` option disables the printing of code (only output is displayed).
